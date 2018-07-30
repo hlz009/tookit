@@ -12,13 +12,8 @@ import java.util.ArrayList;
 public class BigNumberMathematicalUtil {
 	private final static int MAX_FACTORIAL_INDEX = 12;
 
-	public static void main(String[] args) {
-		System.out.println(factorial(17));
-//		System.out.println(multiply(999999, 999999));
-	}
-
 	private BigNumberMathematicalUtil() {}
-	
+
 	/**
 	 * 阶乘运算
 	 * @param n 
