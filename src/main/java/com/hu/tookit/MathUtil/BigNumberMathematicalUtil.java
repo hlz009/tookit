@@ -19,6 +19,11 @@ public class BigNumberMathematicalUtil {
 
 	private BigNumberMathematicalUtil() {}
 	
+	/**
+	 * 阶乘运算
+	 * @param n 
+	 * @return
+	 */
 	public static String factorial(int n) {
 		int sum = 1;
 		int[] sumArray = null;
