@@ -1,11 +1,12 @@
 package com.hu.tookit.MathUtil;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 大数字整型运算帮助类,适用于jdk1.8以上
- * 应用场景：中性大数字运算，当两个数相乘，且其中被乘数与乘数的某一位的乘积
- * 不会超过int的最大位数。
+ * 应用场景：目前只适合正整数
  * @author xiaozhi009
  *
  */
@@ -66,7 +67,7 @@ public class BigNumberMathematicalUtil {
 	}
 
 	/**
-	 * 乘法运算，建议乘数大于被乘数，提高允许效率。
+	 * 乘法运算，建议乘数大于被乘数。
 	 * 第一步：乘数（大的那一位）转成数组，与被乘数进行每一位相乘
 	 * 第二步：进位和留位
 	 * @param multiplier 乘数
@@ -81,6 +82,52 @@ public class BigNumberMathematicalUtil {
 		}
 		int[] multiplierArray = intToIntArray(multiplier);
 		return intArrayToString(multiplyArray(multiplicand, multiplierArray));
+	}
+
+	/**
+	 * 乘法运算
+	 * 适合两个数字都超过Integer.MAX_VALUE
+	 * @param multiplier 乘数
+	 * @param multiplicand 被乘数
+	 * @return
+	 */
+	public static String multiplyLarge(String multiplier, String multiplicand) {
+		int[] multiplierArray = StringToIntArray(multiplier);
+		int[] multiplicandArray = StringToIntArray(multiplicand);
+		int[] sumArray = new int[multiplierArray.length]; 
+		for (int i = 0, lenI = multiplicandArray.length; i < lenI; i++) {
+			int multiplicandNum = multiplicandArray[i]*(int)(Math.pow(10, i));
+			for (int j = 0, len = multiplierArray.length; j < len; j++) {
+				sumArray[j] += multiplierArray[j] * multiplicandNum;
+			}
+		}
+		int carryDigit = 0;
+		for (int i = 0, len = sumArray.length; i < len; i++) {
+			sumArray[i] += carryDigit;
+			carryDigit = sumArray[i] / 10;
+			sumArray[i] = sumArray[i] % 10;
+		}
+		sumArray = carryDigit(sumArray, carryDigit);
+		return intArrayToString(sumArray);
+	}
+
+	private static int[] StringToIntArray(String numStr) {
+		isNumeric(numStr);
+	    int len = numStr.length();
+	    int[] numArray = new int[len];
+	    for (int i = 0; i < len; i++) {
+	    	// 数字0~9的ASCII码为48~57
+	    	numArray[i] = numStr.charAt(i) - 48;
+	    }
+	    return numArray; 
+	}
+
+	private static void isNumeric(String numStr) {
+		Pattern pattern = Pattern.compile("[0-9]*"); 
+		Matcher isNum = pattern.matcher(numStr);
+	    if (!isNum.matches()) {
+	       throw new NumberFormatException("字符串只能是数字"); 
+	    }
 	}
 
 	private static int[] multiplyArray(int multiplicand, int[] multiplierArray) {
