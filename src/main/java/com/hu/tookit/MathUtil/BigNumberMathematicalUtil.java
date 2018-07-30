@@ -18,7 +18,6 @@ public class BigNumberMathematicalUtil {
 	}
 
 	private BigNumberMathematicalUtil() {}
-
 	
 	public static String factorial(int n) {
 		int sum = 1;
