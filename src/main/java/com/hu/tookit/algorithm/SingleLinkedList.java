@@ -214,6 +214,7 @@ public class SingleLinkedList<T> implements Iterable<T> {
 
 	/**
 	 * 交换两个相邻的元素
+	 * (不是交换数据)
 	 * @param first
 	 * @param second
 	 */
@@ -235,14 +236,42 @@ public class SingleLinkedList<T> implements Iterable<T> {
 			firstIndex = firstIndex - secondIndex;
 		}
 		Node<T> currentNode = head;
-		// 得到上一个
-		for (int i = 0; i < firstIndex-1; i++) {
-			currentNode = currentNode.next;
+		if (firstIndex == 0) {
+			Node<T> next = currentNode.next.next; // second的下一个
+			Node<T> tempNode = currentNode.next; // second
+			currentNode.next = next;// 第一个指向第三个
+			tempNode.next = currentNode; // 将第二个指向
+			head = tempNode;
+		} else {
+			// 得到上一个
+			for (int i = 0; i < firstIndex-1; i++) {
+				currentNode = currentNode.next;
+			}
+			Node<T> next = currentNode.next.next.next; // second的下一个
+			Node<T> tempNode = currentNode.next; // first
+			currentNode.next = currentNode.next.next; // 交换second
+			currentNode.next.next = tempNode;// 交换first
+			tempNode.next = next; // 指向下面的元素
 		}
-		Node<T> next = currentNode.next.next.next; // second的下一个
-		Node<T> tempNode = currentNode.next; // first
-		currentNode.next = currentNode.next.next; // 交换second
-		currentNode.next.next = tempNode;// 交换first
-		tempNode.next = next; // 指向下面的元素
 	}
+
+//	/**
+//	 * 或者直接执行两次set操作
+//	   (不是交换数据)
+//	   set操作是交换元素
+//	 * @param first
+//	 * @param second
+//	 */
+//	public void swap(T first, T second) {
+//		int firstIndex = getIdx(first);
+//		int secondIndex = getIdx(second);
+//		if (firstIndex < -1 || secondIndex < -1) {
+//			throw new RuntimeException("元素不存在");
+//		}
+//		if (firstIndex == secondIndex || first.equals(second)) {
+//			throw new RuntimeException("同一个元素不能执行交换操作");
+//		}
+//		set(firstIndex, second);
+//		set(secondIndex, first);
+//	}
 }
