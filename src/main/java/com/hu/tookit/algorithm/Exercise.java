@@ -12,8 +12,10 @@ public class Exercise {
 		ss.add(1);
 		ss.add(2);
 		ss.add(3);
+		ss.add(4);
+		ss.add(5);
 		System.out.println(ss.toString());
-		ss.swap(2, 3);
+		ss.swap2(5, 6);
 		System.out.println(ss.toString());
 	}
 }
