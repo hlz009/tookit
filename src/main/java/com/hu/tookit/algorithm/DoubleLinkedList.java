@@ -63,7 +63,7 @@ public class DoubleLinkedList<T> {
 			Node<T> secondNode = currentNode.next;
 			Node<T> thirdNode = secondNode.next;
 			secondNode.next = firstNode;
-			secondNode.prev = null;
+			secondNode.prev = currentNode.prev;
 			firstNode.prev = secondNode;
 			firstNode.next = thirdNode;
 			head = secondNode;
@@ -83,7 +83,7 @@ public class DoubleLinkedList<T> {
 		firstNode.prev = secondNode;
 		firstNode.next = thirdNode;
 	}
-
+	
 	private void checkSwapElement(int firstIdx, int secondIdx) {
 		if (firstIdx == -1 || secondIdx == -1) {
 			throw new RuntimeException("无法交换不存在的元素");
