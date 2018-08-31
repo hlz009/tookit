@@ -2,6 +2,9 @@ package com.hu.tookit.algorithm;
 
 import java.util.Stack;
 
+import com.hu.tookit.algorithm.constant.BalanceSymbol;
+import com.hu.tookit.algorithm.constant.Operator;
+
 /**
  * 关于栈的一些小应用
  * @author xiaozhi009
@@ -87,8 +90,8 @@ public class AlStack {
 				resultStr += ch;
 			} else {
 				while (!stack.isEmpty()) {
-					int prevPriority = getOperatorPriority(stack.peek());
-					int currentPriority = getOperatorPriority(ch);
+					int prevPriority = Operator.getPriority(stack.peek());
+					int currentPriority = Operator.getPriority(ch);
 					if (prevPriority < currentPriority ||
 							(prevPriority == 10 && currentPriority != 0)) {
 						// 栈顶元素的优先级低于当前元素的优先级
@@ -119,29 +122,6 @@ public class AlStack {
 		return resultStr;
 	}
 
-	private static int getOperatorPriority(char ch) {
-		switch(ch) {
-			case '+':
-				return 1;
-			case '-':
-				return 1;
-			case '*':
-				return 2;
-			case '/':
-				return 2;
-			case '÷':
-				return 2;
-			case '%':
-				return 2;
-			case '(':
-				return 10;
-			case ')':
-				return 0;
-			default:
-				throw new RuntimeException("运算符错误" + ch);
-		}
-	}
-
 	/**
 	 * 平衡符号
 	 * 检测代码中的 {} [] ()等
@@ -155,18 +135,18 @@ public class AlStack {
 		Stack<Character> stack = new Stack<Character>();
 		for (int i = 0, len = inputStr.length(); i < len; i++) {
 			char currentCh = inputStr.charAt(i);
-			int openSymbolIntVal = getOpenSymbol(currentCh);
+			int openSymbolIntVal = BalanceSymbol.getOpenSymol(currentCh);
 			if (openSymbolIntVal > 0) {
 				stack.push(currentCh);
 				continue;
 			}
-			int closedSymbolIntVal = getClosedSymbol(currentCh);
+			int closedSymbolIntVal = BalanceSymbol.getClosedSymol(currentCh);
 			if (closedSymbolIntVal > 0) {
 				if (stack.isEmpty()) {
 					throw new RuntimeException("当前不能为封闭字符：" + currentCh);
 				}
 				char prevCh = stack.pop();
-				if (closedSymbolIntVal != getOpenSymbol(prevCh)) {
+				if (closedSymbolIntVal != BalanceSymbol.getOpenSymol(prevCh)) {
 					throw new RuntimeException("开放符号："+ prevCh + "与封闭字符："
 							+ currentCh + "不能对应");
 				}
@@ -187,31 +167,5 @@ public class AlStack {
 	 */
 	private static String getBalanceSymbolStr(String str) {
 		return str.replaceAll("\\w", "");
-	}
-	
-	private static int getOpenSymbol(char ch) {
-		switch(ch){
-			case '{':
-				return 1;
-			case '[':
-				return 2;
-			case '(':
-				return 3;
-			default:
-				return -1;
-		}
-	}
-
-	private static int getClosedSymbol(char ch) {
-		switch(ch){
-			case '}':
-				return 1;
-			case ']':
-				return 2;
-			case ')':
-				return 3;
-			default:
-				return -1;
-		}
 	}
 }

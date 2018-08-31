@@ -1,4 +1,4 @@
-package com.hu.tookit.algorithm;
+package com.hu.tookit.algorithm.datastructure;
 
 /**
  * 链表---双链表结构（非循环）

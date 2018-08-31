@@ -1,4 +1,4 @@
-package com.hu.tookit.algorithm;
+package com.hu.tookit.algorithm.datastructure;
 
 import java.util.Iterator;
 
