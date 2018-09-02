@@ -1,4 +1,4 @@
-package com.hu.tookit.algorithm;
+package com.hu.tookit.algorithm.datastructure;
 
 import java.util.Iterator;
 
@@ -98,13 +98,10 @@ public class SingleLinkedList<T> implements Iterable<T> {
 		int index = 0;
 		while(current != null) {
 			if (current.data.equals(o)) {
-				break;
+				return index;
 			}
 			current = current.next;
 			index++;
-		}
-		if (current != null) {
-			return index;
 		}
 		return -1;
 	}

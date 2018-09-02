@@ -1,4 +1,4 @@
-package com.hu.tookit.algorithm;
+package com.hu.tookit.algorithm.datastructure;
 
 /**
  * 链表---双链表结构（非循环）
@@ -46,7 +46,7 @@ public class DoubleLinkedList<T> {
 	}
 
 	/**
-	 * 交换元素，不是直接交换数据
+	 * 交换相邻元素，不是直接交换数据
 	 * 新建交换好顺序的元素替换
 	 * @param first
 	 * @param second
@@ -54,11 +54,45 @@ public class DoubleLinkedList<T> {
 	public void swap2(T first, T second) {
 		int firstIdx = getIdx(first);
 		int secondIdx = getIdx(second);
+		checkSwapElement(firstIdx, secondIdx);
 		int idx = Math.min(firstIdx, secondIdx);
-		
+		Node<T> currentNode = head;
+		if (idx == 0) {
+			// 第一个元素交换
+			Node<T> firstNode = currentNode;
+			Node<T> secondNode = currentNode.next;
+			Node<T> thirdNode = secondNode.next;
+			secondNode.next = firstNode;
+			secondNode.prev = currentNode.prev;
+			firstNode.prev = secondNode;
+			firstNode.next = thirdNode;
+			head = secondNode;
+			return;
+		}
+		int index = 0;
+		while(index < idx-1) {
+			currentNode = currentNode.next;
+			index++;
+		}
+		Node<T> firstNode = currentNode.next;
+		Node<T> secondNode = currentNode.next.next;
+		Node<T> thirdNode = secondNode.next;
+		currentNode.next = secondNode;
+		secondNode.next = firstNode;
+		secondNode.prev = currentNode;
+		firstNode.prev = secondNode;
+		firstNode.next = thirdNode;
 	}
 	
-	
+	private void checkSwapElement(int firstIdx, int secondIdx) {
+		if (firstIdx == -1 || secondIdx == -1) {
+			throw new RuntimeException("无法交换不存在的元素");
+		}
+		if (Math.abs(firstIdx - secondIdx) != 1) {
+			throw new RuntimeException("只能交换相邻的元素");
+		}
+	}
+
 	/**
 	 * 交换元素，不是直接交换数据
 	 * 每次新建一个元素替换
@@ -68,6 +102,7 @@ public class DoubleLinkedList<T> {
 	public void swap(T first, T second) {
 		int firstIdx = getIdx(first);
 		int secondIdx = getIdx(second);
+		checkSwapElement(firstIdx, secondIdx);
 		reset(firstIdx, second);
 		reset(secondIdx, first);
 	}
@@ -103,12 +138,12 @@ public class DoubleLinkedList<T> {
 		int idx = 0;
 		while(currentData != null) {
 			if (currentData.value.equals(data)) {
-				break;
+				return idx;
 			}
 			currentData = currentData.next;
 			idx++;
 		}
-		return idx;
+		return -1;
 	}
 
 	@Override
