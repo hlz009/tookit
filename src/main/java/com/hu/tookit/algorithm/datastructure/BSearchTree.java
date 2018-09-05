@@ -6,80 +6,22 @@ package com.hu.tookit.algorithm.datastructure;
  *
  * @param <T>
  */
-public class BSearchTree<T extends Comparable<? super T>> {
-	
-	/**  BTreeNode 实际该类可以创建成内部类 */
-	private BTreeNode<T> root;
-	
+public class BSearchTree<T extends Comparable<? super T>> extends AbstractTree<T> {
+		
 	public BSearchTree() {
 		root = null;
 	}
 
-	public boolean isEmpty() {
-		return root == null;
-	}
+	// 以下contains，insert， remove，如果没有特殊业务需要，可直接调用
+	// 其父类方法。不用在子类中覆写
 
-	public T findMin() {
-		if (isEmpty()) {
-			throw new RuntimeException("空树");
-		}
-		return findMin(root).getElement();
-	}
-
-	/**
-	 * 递归实现
-	 * @param node
-	 * @return
-	 */
-	private BTreeNode<T> findMin(BTreeNode<T> node) {
-		if (node.getLeft() == null) {
-			return node;
-		} else {
-			return findMin(node.getLeft());
-		}
-	}
-
-	public T findMax() {
-		if (isEmpty()) {
-			throw new RuntimeException("空树");
-		}
-		return findMax(root).getElement();
-	}
-
-	/**
-	 * 非递归实现
-	 * @param node
-	 * @return
-	 */
-	private BTreeNode<T> findMax(BTreeNode<T> node) {
-		while(node.getRight() != null) {
-			node = node.getRight();
-		}
-		return node;
-	}
-	
+	@Override
 	public boolean contains(T data) {
+		/**
+		 * or 调用父类 
+		 * return super.contains(data);
+		 */
 		return contains(root, data);
-	}
-
-	/**
-	 * 递归调用，语义更简单
-	 * @param node
-	 * @param data
-	 * @return
-	 */
-	private boolean contains(BTreeNode<T> node, T data) {
-		if (node == null) {
-			return false;
-		}
-		int compareResult = data.compareTo(node.getElement());
-		if (compareResult < 0) {
-			return contains(node.getLeft(), data);
-		} else if (compareResult > 0) {
-			return contains(node.getRight(), data);
-		} else {
-			return true;
-		}
 	}
 
 	/**
@@ -88,14 +30,14 @@ public class BSearchTree<T extends Comparable<? super T>> {
 	 * @param data
 	 * @return
 	 */
-	private boolean contains2(BTreeNode<T> node, T data) {
+	private boolean contains(BinaryNode<T> node, T data) {
 		boolean contains = false;
 		while (node != null) {
-			int compareResult = data.compareTo(node.getElement());
+			int compareResult = data.compareTo(node.element);
 			if (compareResult < 0) {
-				node = node.getLeft();
+				node = node.left;
 			} else if (compareResult > 0) {
-				node = node.getRight();
+				node = node.right;
 			} else {
 				contains = true;
 				break;
@@ -104,58 +46,117 @@ public class BSearchTree<T extends Comparable<? super T>> {
 		return contains;
 	}
 
+	@Override
 	public void insert(T data) {
+		/**
+		 * or 调用父类 
+		 * super.insert(data);
+		 */
 		insert(root, data);
 	}
 
-	private void insert(BTreeNode<T> node, T data) {
+	/**
+	 * 非递归形式，如果插入数据后，需要平衡，则不能这样写
+	 * 具体参考AVLTree
+	 * @param node
+	 * @param data
+	 * @return
+	 */
+	private BinaryNode<T> insert(BinaryNode<T> node, T data) {
 		if (null == node) {
-			node = new BTreeNode<T>(null, data, null);
-			return;
+			root = new BinaryNode<T>(null, data, null);
+			return root;
 		}
-		BTreeNode<T> current = node;
-		BTreeNode<T> newNode = new BTreeNode<T>(null, data, null);
+		BinaryNode<T> current = node;
+		BinaryNode<T> newNode = new BinaryNode<T>(null, data, null);
 		while(current != null) {
-			int compareResult = data.compareTo(current.getElement());
+			int compareResult = data.compareTo(current.element);
 			if (compareResult < 0) {
-				if (current.getLeft() == null) {
-					current.setLeft(newNode);
+				if (current.left == null) {
+					current.left = newNode;
 					break;
 				}
-				current = current.getLeft();
-			} else if (compareResult < 0) {
-				if (current.getRight() == null) {
-					current.setRight(newNode);
+				current = current.left;
+			} else if (compareResult > 0) {
+				if (current.right == null) {
+					current.right = newNode;
 					break;
 				}
-				current = current.getRight();
+				current = current.right;
 			} else {
 				break;
 			}
 		}
+		return current;
 	}
 
+	@Override
 	public void remove(T data) {
+		/**
+		 * or 调用父类的
+		 * super.remove(data);
+		 */
+//		super.remove(data);
 		remove(root, data);
 	}
 
-	private void remove(BTreeNode<T> node, T data) {
+	// 非递归
+	private BinaryNode<T> remove(BinaryNode<T> node, T data) {
 		if (null == node) {
-			return;
+			return node;
 		}
-		while(node != null) {
-			int compareResult = data.compareTo(node.getElement());
+		BinaryNode<T> current = node;
+		BinaryNode<T> parent = node;
+		while(current != null) {
+			int compareResult = data.compareTo(current.element);
 			if (compareResult < 0) {
-				node = node.getLeft();
+				parent = current;
+				current = current.left;
 			} else if (compareResult > 0) {
-				node = node.getRight();
-			} else if (node.getLeft() != null && node.getRight() != null) {
-				T minData = findMin(node.getRight()).getElement();
-				node.setElement(minData);// 替换element
-				remove(node.getRight(), minData);
+				parent = current;
+				current = current.right;
+			} else if (current.left != null && current.right != null) {
+				BinaryNode<T> sub = current.right;
+				while(sub.left != null) {
+					// 类似于findMin
+					parent = sub;
+					sub = sub.left;
+				}
+				current.element = sub.element;
+				// sub最多只有右子节点（因为是删除右子树最小的节点，该节点不可能有左子节点）
+				if (parent.left != null) {
+					parent.left = sub.right;
+				} else {
+					parent.right = sub.right;
+				}
 			} else {
-				node = node.getLeft() != null? node.getLeft(): node.getRight();
+				if (parent.left != null) {
+					parent.left = current.left != null? current.left: current.right;
+				} else {
+					parent.right = current.left != null? current.left: current.right;
+				}
+				break;
 			}
 		}
+		return parent;
+	}
+
+	public static void main(String[] args) {
+		BSearchTree<Integer> bst = new BSearchTree<Integer>();
+		bst.insert(6);
+		bst.insert(2);
+		bst.insert(1);
+		bst.insert(5);
+		bst.insert(3);
+		bst.insert(4);
+		bst.insert(8);
+		bst.remove(2);
+		System.out.println(bst.contains(2));
+		System.out.println(bst.contains(1));
+//		System.out.println(bst.contains(3));
+		System.out.println(bst.root.element);
+		System.out.println(bst.root.left.right.left.element);
+//		System.out.println(bst.root.getLeft().getLeft().getElement());
+		System.out.println(bst.root.right.element);
 	}
 }
