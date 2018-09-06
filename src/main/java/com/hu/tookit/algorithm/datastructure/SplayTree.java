@@ -15,11 +15,15 @@ public class SplayTree<T extends Comparable<? super T>> extends AbstractTree<T> 
 
 	@Override
 	public void insert(T element) {
-		if (null == root) {
-			root = new SplayNode<T>(null, element, null);
-			return;
+		SplayNode<T> newNode = insert((SplayNode<T>)root, element);
+		splay(newNode);
+	}
+
+	private SplayNode<T> insert(SplayNode<T> node, T element) {
+		if (null == node) {
+			return new SplayNode<T>(null, element, null);
 		}
-		SplayNode<T> current = (SplayNode<T>) root;
+		SplayNode<T> current = (SplayNode<T>) node;
 		SplayNode<T> parent = current;
 		SplayNode<T> newNode = new SplayNode<T>(null, element, null);
 		while(current != null) {
@@ -44,6 +48,7 @@ public class SplayTree<T extends Comparable<? super T>> extends AbstractTree<T> 
 				current.parent = parent;
 			}
 		}
+		return newNode;
 	}
 
 	/**
@@ -83,8 +88,7 @@ public class SplayTree<T extends Comparable<? super T>> extends AbstractTree<T> 
 
 	/**
 	 * 自底向上实现
-	 * @param element
-	 * @param node
+	 * @param node 要移动的元素
 	 */
 	private SplayNode<T> splay(SplayNode<T> node) {
 		SplayNode<T> parent = node.parent;
@@ -96,6 +100,7 @@ public class SplayTree<T extends Comparable<? super T>> extends AbstractTree<T> 
 				} else {
 					node = rotateWithRightChild(parent);
 				}
+				root = node;// 这样写不需要调用时，再处理根节点
 				return node;
 			}
 			if (grandParent.left == parent) {
@@ -123,7 +128,7 @@ public class SplayTree<T extends Comparable<? super T>> extends AbstractTree<T> 
 			}
 			parent = node.parent;
 		}
-		root = node;
+		root = node;// 这样写不需要调用时，再处理根节点
 		return node;
 	}
 
@@ -227,7 +232,7 @@ public class SplayTree<T extends Comparable<? super T>> extends AbstractTree<T> 
 //		st.printTree();
 //		System.out.println(st.contains(3));
 //		st.printTree();
-		st.remove(1);
+//		st.remove(1);
 		System.out.println(st.root.element);
 	}
 }
