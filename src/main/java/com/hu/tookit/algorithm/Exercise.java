@@ -21,7 +21,11 @@ public class Exercise {
 		s1.add(3);
 		s1.add(4);
 		s1.add(5);
-		System.out.println(Josephus(3, s1));
+//		System.out.println(Josephus(3, s1));
+		for(int i=0; i < 5; i++) {
+			s1.remove(0);
+		}
+		System.out.println(s1);
 	}
 
 	/**
