@@ -267,7 +267,7 @@ public class BPlusTree<T extends Comparable<? super T>> {
 			currentNodeIndex = parentNode.keys.indexOf(currentNode.data.get(0));
 		}
 		boolean isRemove = currentNode.data.remove(element);
-		System.out.println("要删除的元素---->" + element);
+//		System.out.println("要删除的元素---->" + element);
 		if (isRemove) {
 			if (currentNode.data.size() < dataMinNum) {
 				if (node == currentNode) {
@@ -278,11 +278,25 @@ public class BPlusTree<T extends Comparable<? super T>> {
 				 * 否则，我们朝其前一个节点合并
 				 */
 				parentNode = mergeAndBorrowLeafNode(currentNode, parentNode, currentNodeIndex);
+				if (parentNode.keys.isEmpty()) {
+					//说明父节点已经没有了
+					node = parentNode.child.get(0);
+					parentNode.child.get(0).parent = null;
+					parentNode = null;
+				}
 				while(parentNode != null) {
 					node = parentNode;
 					BPlusNode<T> grandParentNode = parentNode.parent;
-					if (parentNode.keys.size() < keyMinNum && grandParentNode != null) {
-						grandParentNode = mergeAndBorrowParentNode(parentNode, grandParentNode);
+					if (grandParentNode != null) {
+						if (parentNode.keys.size() < keyMinNum) {
+							grandParentNode = mergeAndBorrowParentNode(parentNode, grandParentNode);
+						}
+						if (grandParentNode.keys.isEmpty()) {
+							//说明父节点已经没有了
+							node = grandParentNode.child.get(0);
+							grandParentNode.child.get(0).parent = null;
+							break;
+						}
 					}
 					parentNode = grandParentNode;
 				}
@@ -296,13 +310,15 @@ public class BPlusTree<T extends Comparable<? super T>> {
 		if (parentMergeAndBorrowIndex == 0) {// 第一个
 			BPlusNode<T> nextParentNode = grandParentNode.child.get(1);
 			if (nextParentNode.keys.size() > keyMinNum) {
-				parentNode.keys.add(nextParentNode.keys.get(0));
+				// 父节点下移，兄弟节点上移
+				parentNode.keys.add(grandParentNode.keys.get(0));
+				grandParentNode.keys.set(0, nextParentNode.keys.get(0));
 				parentNode.child.add(nextParentNode.child.get(0));
+				nextParentNode.child.get(0).parent = parentNode;
 				nextParentNode.keys.remove(0);
 				nextParentNode.child.remove(0);
 			} else {
-				// 合并节点
-				// 父节点key下移，放到nextParentNode上
+				// 合并节点， 父节点key下移，放到nextParentNode上
 				nextParentNode.keys.add(0, grandParentNode.keys.get(0));
 				grandParentNode.keys.remove(0);
 				grandParentNode.child.remove(0);
@@ -321,8 +337,10 @@ public class BPlusTree<T extends Comparable<? super T>> {
 			BPlusNode<T> prevParentNode = grandParentNode.child.get(parentMergeAndBorrowIndex - 1);
 			if (prevParentNode.keys.size() > keyMinNum) {
 				int prevBorrowIndex = prevParentNode.keys.size()-1;
-				parentNode.keys.add(0, prevParentNode.keys.get(prevBorrowIndex));
+				parentNode.keys.add(0, grandParentNode.keys.get(parentMergeAndBorrowIndex - 1));
 				parentNode.child.add(0, prevParentNode.child.get(prevBorrowIndex));
+				prevParentNode.child.get(prevBorrowIndex).parent = parentNode;
+				grandParentNode.keys.set(parentMergeAndBorrowIndex - 1, prevParentNode.keys.get(prevBorrowIndex));
 				prevParentNode.keys.remove(prevBorrowIndex);
 				prevParentNode.child.remove(prevBorrowIndex);
 			} else {
@@ -342,10 +360,6 @@ public class BPlusTree<T extends Comparable<? super T>> {
 				}
 			}
 		}
-		if (grandParentNode.keys.size() == 0) {
-			//说明父节点已经没有了
-			grandParentNode = null;
-		}
 		return grandParentNode;
 	}
 
@@ -361,7 +375,7 @@ public class BPlusTree<T extends Comparable<? super T>> {
 			} else {
 				// 与下一个节点合并
 				for (int i = 0, len = currentNode.data.size(); i < len; i++) {
-					nextNode.data.set(i, currentNode.data.get(i));
+					nextNode.data.add(i, currentNode.data.get(i));
 				}
 				parentNode.keys.remove(0);
 				parentNode.child.remove(0);
@@ -373,7 +387,7 @@ public class BPlusTree<T extends Comparable<? super T>> {
 				// 从上一个节点借一个数据，不需要合并父类节点
 				currentNode.data.add(prevNode.data.get(prevNode.data.size() - 1));
 				prevNode.data.remove(prevNode.data.size() - 1);
-				parentNode.keys.set(0, prevNode.data.get(prevNode.data.size() - 1));
+				parentNode.keys.set(0, currentNode.data.get(0));
 			} else {
 				// 与上一个节点合并
 				for (int i = 0, len = currentNode.data.size(); i < len; i++) {
@@ -410,15 +424,16 @@ public class BPlusTree<T extends Comparable<? super T>> {
 		}
 //		bpt.remove(5);
 //		bpt.remove(6);
-//		for (int i = 0; i < 40; i++) {
-//			bpt.remove(i);
-//		}
-//		for (int i = 40; i < 99; i++) {
-//			bpt.remove(i);
-//		}
-		childs = bpt.root.child;
-		for (BPlusTree<Integer>.BPlusNode<Integer> child: childs) {
-			System.out.println(child.child);
+		for (int i = 0; i < 95; i++) {
+			bpt.remove(i);
 		}
+		System.out.println(bpt.root.keys);
+		for (int i = 95; i < 99; i++) {
+			bpt.remove(i);
+		}
+		childs = bpt.root.child;
+//		for (BPlusTree<Integer>.BPlusNode<Integer> child: childs) {
+//			System.out.println(child.child);
+//		}
 	}
 }
