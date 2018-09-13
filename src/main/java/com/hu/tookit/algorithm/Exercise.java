@@ -1,11 +1,13 @@
 package com.hu.tookit.algorithm;
 
-import java.nio.file.FileSystem;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * 表、栈、队
@@ -103,4 +105,54 @@ public class Exercise {
 		return result;
 	}
 
+	/**
+	 * 返回单个字母替换成多个单词的单词集合
+	 * @param theWords
+	 * @return
+	 */
+	public static Map<String, List<String>> computeAdjacentWords(List<String> theWords) {
+		Map<String, List<String>> adjWords = new HashMap<>();
+		Map<Integer, List<String>> wordsByLength = new HashMap<>();
+
+		for (String word: theWords) {
+			update(wordsByLength, word.length(), word);
+		}
+		
+		for (Entry<Integer, List<String>> wordEntry: wordsByLength.entrySet()) {
+			List<String> groupWords = wordEntry.getValue();
+			int groupNum = wordEntry.getKey();
+			
+			for (int i = 0; i < groupNum; i++) {
+				Map<String, List<String>> repToWord = new HashMap<>();
+				for (String groupWord: groupWords) {
+					String rep = groupWord.substring(0, i) + groupWord.substring(i+1);
+					update(repToWord, rep, groupWord);
+				}
+				for (List<String> wordClique: repToWord.values()) {
+					for (String wordI: wordClique) {
+						for (String wordJ: wordClique) {
+							if (wordI != wordJ) {
+								update(adjWords, wordI, wordJ);
+							}
+						}
+					}
+//					for (int first = 0, lenX = wordClique.size(); first < lenX; first++) {
+//						for (int second = 0, lenY = wordClique.size(); second < lenY; second++) {
+//							update(adjWords, wordClique.get(first), wordClique.get(second));
+//						}
+//					}
+				}
+			}
+		}
+		return adjWords;
+	}
+
+	private static <T> void update(Map<T, List<String>> map, T key, String value) {
+		List<String> values = map.get(key);
+		if (null == values) {
+			values = new ArrayList<>();
+			map.put(key, values);
+		}
+		values.add(value);
+	}
 }

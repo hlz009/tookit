@@ -1,4 +1,4 @@
-package com.hu.tookit.MathUtil;
+package com.hu.tookit.Math;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,10 +10,10 @@ import java.util.regex.Pattern;
  * @author xiaozhi009
  *
  */
-public class BigNumberMathematicalUtil {
+public class BigNumberMathematical {
 	private final static int MAX_FACTORIAL_INDEX = 12;
 
-	private BigNumberMathematicalUtil() {}
+	private BigNumberMathematical() {}
 
 	/**
 	 * 阶乘运算

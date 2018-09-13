@@ -401,8 +401,9 @@ public class BPlusTree<T extends Comparable<? super T>> {
 	}
 
 	public static void main(String[] args) {
+		long start = System.currentTimeMillis();
 		BPlusTree<Integer> bpt = new BPlusTree<Integer>();
-		for (int i = 0; i < 99; i++) {
+		for (int i = 0; i < 100000; i++) {
 			bpt.insert(i);
 		}
 //		int countTrue = 0;
@@ -417,21 +418,23 @@ public class BPlusTree<T extends Comparable<? super T>> {
 //		bpt.remove(2);
 //		System.out.println(bpt.root.isLeaf);
 //		System.out.println(bpt.root.keys);
-		System.out.println(bpt.root.data);
-		ArrayList<BPlusTree<Integer>.BPlusNode<Integer>> childs = bpt.root.child;
-		for (BPlusTree<Integer>.BPlusNode<Integer> child: childs) {
-			System.out.println(child.child);
-		}
+//		System.out.println(bpt.root.data);
+//		ArrayList<BPlusTree<Integer>.BPlusNode<Integer>> childs = bpt.root.child;
+//		for (BPlusTree<Integer>.BPlusNode<Integer> child: childs) {
+//			System.out.println(child.child);
+//		}
 //		bpt.remove(5);
 //		bpt.remove(6);
-		for (int i = 0; i < 95; i++) {
+		for (int i = 0; i < 100000; i++) {
 			bpt.remove(i);
 		}
 		System.out.println(bpt.root.keys);
-		for (int i = 95; i < 99; i++) {
-			bpt.remove(i);
-		}
-		childs = bpt.root.child;
+		long end = System.currentTimeMillis();
+		System.out.println(end-start);
+//		for (int i = 95; i < 99; i++) {
+//			bpt.remove(i);
+//		}
+//		childs = bpt.root.child;
 //		for (BPlusTree<Integer>.BPlusNode<Integer> child: childs) {
 //			System.out.println(child.child);
 //		}
