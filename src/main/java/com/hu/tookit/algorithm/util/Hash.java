@@ -1,5 +1,8 @@
 package com.hu.tookit.algorithm.util;
 
+import java.util.Random;
+
+import com.hu.tookit.Math.Prime;
 import com.hu.tookit.algorithm.constant.HashEnum;
 
 /**
@@ -8,11 +11,12 @@ import com.hu.tookit.algorithm.constant.HashEnum;
  *
  */
 public class Hash {
+	private static Random r = new Random();
 	private Hash() {
 	}
 
 	/**
-	 * 此散列只适合很少的数据，经测试没什么用
+	 * 此散列只适合很少的数据
 	 * @param key
 	 * @return
 	 */
@@ -22,6 +26,41 @@ public class Hash {
 			hashVal += key.charAt(i);
 		}
 		return hashVal;
+	}
+	
+	private static final int DIGS = 31;
+	private static final int MERSENNE_PRIME = (1 << DIGS) - 1;
+	private static int a = r.nextInt();
+	private static int b = r.nextInt();
+	/**
+	 * 针对整数的通用散列
+	 * @param x
+	 * @return
+	 */
+	public static int universalHash(int x) {
+		// a * x + b a和b可以随机选取
+		long hashVal = (long) a*x + b;
+		hashVal = (hashVal >> DIGS) + (hashVal & MERSENNE_PRIME);
+		if (hashVal >= MERSENNE_PRIME) {
+			hashVal -= MERSENNE_PRIME;
+		}
+		return (int) hashVal;
+	}
+
+	private static final int SPRIME = 257;
+	/**
+	 * 针对字符的通用散列
+	 * @param x
+	 * @return
+	 */
+	public static int universalStringHash(String key) {
+		return universalHash(polynomialHash(key));
+	}
+
+	public static void generateFactor() {
+		a = r.nextInt();
+		b = r.nextInt();
+		coefficient = Prime.nextPrime(r.nextInt(SPRIME));
 	}
 
 	/**
@@ -38,15 +77,16 @@ public class Hash {
 				729*key.charAt(2);
 	}
 
+	private static int coefficient = 31;
 	/**
-	 * 多项式   利用Hornor法则计算37的多项式函数
+	 * 多项式   利用Hornor法则计算31的多项式函数
 	 * @param key
 	 * @return
 	 */
 	public static int polynomialHash(String key) {
 		int hashVal = 0;
 		for (int i = 0; i < key.length(); i++) {
-			hashVal = 37*hashVal + key.charAt(i);
+			hashVal = coefficient*hashVal + key.charAt(i);
 		}
 		return hashVal;
 	}
@@ -57,12 +97,14 @@ public class Hash {
 
 	public static <T> int hash(T data, int which) {
 		switch(HashEnum.getHashEnum(which)) {
-//			case ASCII: //此散列不好用
-//				return ASCIIHash(String.valueOf(data));
+			case Integer: 
+				return universalHash((Integer)data);
 			case CHARACTERS:
-				return charactersHash(String.valueOf(data));
+				return charactersHash((String) data);
 			case POLYNOMIAL:
-				return polynomialHash(String.valueOf(data));
+				return polynomialHash((String) data);
+			case String:
+				return universalStringHash((String) data);
 			default :
 				return nativeHash(data);
 		}
@@ -70,10 +112,5 @@ public class Hash {
 
 	public static int getHashNum() {
 		return HashEnum.values().length;
-	}
-
-	public static void main(String[] args) {
-		Integer i = 0;
-		System.out.println(i.hashCode());
 	}
 }

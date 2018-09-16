@@ -15,20 +15,6 @@ import java.util.Map.Entry;
  *
  */
 public class Exercise {
-	
-	public static void main(String[] args) {
-		List<Integer> s1 = new ArrayList<Integer>();
-		s1.add(1);
-		s1.add(2);
-		s1.add(3);
-		s1.add(4);
-		s1.add(5);
-//		System.out.println(Josephus(3, s1));
-		for(int i=0; i < 5; i++) {
-			s1.remove(0);
-		}
-		System.out.println(s1);
-	}
 
 	/**
 	 * 进行交集操作

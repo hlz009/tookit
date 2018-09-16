@@ -24,6 +24,7 @@ public class HashFactoryImpl<T> implements HashFactory<T> {
 
 	@Override
 	public void generateNewFunctions() {
+		Hash.generateFactor();
 	}
 
 	@Override

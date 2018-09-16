@@ -1,8 +1,8 @@
 package com.hu.tookit.algorithm.constant;
 
 public enum HashEnum {
-	NATIVE(0), ASCII(1), CHARACTERS(2),
-	POLYNOMIAL(3);
+	NATIVE(0), Integer(1), CHARACTERS(2),
+	POLYNOMIAL(3), String(4);
 
 	private final int index;
 	HashEnum(int index) {

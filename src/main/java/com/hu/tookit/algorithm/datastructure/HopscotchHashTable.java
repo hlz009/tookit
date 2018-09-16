@@ -11,8 +11,7 @@ import com.hu.tookit.algorithm.util.HashFactoryImpl;
 /**
  * 跳房子散列
  * 好的散列函数和表的大小(取素数)，可以提高程序执行性能，降低出错率。
- * 目前测试，感觉不太理想，
- * （也可能时hash函数的问题，选择跟布谷鸟散列同样的hash函数测试，基本上OK）
+ * （散列函数的选取的好坏，是影响程序好坏的关键，实际中hashCode()函数，没有太大意义）
  * @author xiaozhi009
  *
  * @param <T>
