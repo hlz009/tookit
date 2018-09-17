@@ -1,7 +1,9 @@
 package com.hu.tookit.algorithm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import com.hu.tookit.algorithm.datastructure.BTreeNode;
@@ -26,6 +28,8 @@ public class AlTree {
 		List<Integer> result = ZTraversal(root);
 		System.out.println(result);
 //		System.out.println(f(9));
+		Map<String, List<String>>  xxx = new HashMap<>();
+		List<List<String>> value = (List<List<String>>) xxx.values();
 	}
 
 	/**
