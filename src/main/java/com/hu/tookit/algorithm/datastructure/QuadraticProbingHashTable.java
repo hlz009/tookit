@@ -61,6 +61,20 @@ public class QuadraticProbingHashTable<T> implements MyHashTable<T> {
 		return isActive(index);
 	}
 
+	/**
+	 * 此方法用于对象有多个成员变量时，
+	 * 以某一个成员变量判断标准时进行查找
+	 * @param data
+	 * @return
+	 */
+	public T get(T data) {
+		int index = findPos(data);
+		if (isActive(index)) {
+			return table[index].element;
+		}
+		return null;
+	}
+
 	public void remove(T data) {
 		int index = findPos(data);
 		if (isActive(index)) {
@@ -85,6 +99,25 @@ public class QuadraticProbingHashTable<T> implements MyHashTable<T> {
 			hashVal += table.length;
 		}
 		return hashVal;
+	}
+	
+	/**
+	 * 直接找到搜索路径上，isActive=false的位置。
+	 * @param data
+	 * @return
+	 */
+	private int findInsertPos(T data) {
+		int index = hash(data);
+		int offset = 1;
+		while (table[index] != null && 
+				!table[index].element.equals(data)) {
+			index += offset*offset; // 二次（平方）探测 f(i)=i^2
+			offset += 1;
+			if (index >= table.length) {
+				index -= table.length;
+			}
+		}
+		return index;
 	}
 
 	/**

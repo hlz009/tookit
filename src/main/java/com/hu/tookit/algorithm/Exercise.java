@@ -7,7 +7,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Map.Entry;
+
+import com.hu.tookit.algorithm.datastructure.CukooHashTable;
+import com.hu.tookit.algorithm.datastructure.HopscotchHashTable;
 
 /**
  * 表、栈、队
@@ -140,5 +144,11 @@ public class Exercise {
 			map.put(key, values);
 		}
 		values.add(value);
+	}
+
+	public static void main(String[] args) {
+		Integer i = 10;
+		Integer j = null;
+		System.out.println(i.compareTo(j));
 	}
 }
