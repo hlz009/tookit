@@ -16,7 +16,7 @@ import com.hu.tookit.algorithm.util.HashFactoryImpl;
  *
  * @param <T>
  */
-public class HopscotchHashTable<T> implements MyHashTable<T> {
+public class HopscotchHashTable<T> extends AbstractHash implements MyHashTable<T> {
 	/**
 	 *  装载因子理论上不超过0.9即可。本程序的散列函数不太好，装载率不能超过0.5。
 	 *  超过0.5 会增大出错率。
@@ -60,6 +60,7 @@ public class HopscotchHashTable<T> implements MyHashTable<T> {
 		 */
 //		table = (Entity<T>[]) new Object[nextPrime(tableSize)]; 
 		hashFunction = new HashFactoryImpl<T>();
+		conflictCount = 0;
 //		indexHashFunction = hasFunction.randomFunction(); 不写，默认为0
 	}
 
@@ -146,6 +147,7 @@ public class HopscotchHashTable<T> implements MyHashTable<T> {
 				}
 				count++;
 			}
+			conflictCount++;
 			if (++rehashes > ALLOWED_REHASHS) {
 				// 再散列次数太多，把表扩大，在rehash
 				rehash((int)(table.length/MAX_LOAD));

@@ -13,7 +13,7 @@ import com.hu.tookit.algorithm.util.StringHashFactory;
  * 比较成熟
  * @param <T>
  */
-public class CukooHashTable<T> implements MyHashTable<T> {
+public class CukooHashTable<T> extends AbstractHash implements MyHashTable<T> {
 	private static final double MAX_LOAD = 0.4;
 	private static final int ALLOWED_REHASHS = 1;
 	private static final int DEFAULT_TABLE_SIZE = 101;
@@ -32,6 +32,7 @@ public class CukooHashTable<T> implements MyHashTable<T> {
 		table = (T[]) new Object[nextPrime(tableSize)];
 		hasFunction = (HashFactory<T>) new StringHashFactory();
 		numHashFunctions = hasFunction.getNumOfFunctions();
+		conflictCount = 0;
 	}
 
 	public int size() {
@@ -81,6 +82,7 @@ public class CukooHashTable<T> implements MyHashTable<T> {
 				table[pos] = data;
 				data = temp;
 			}
+			conflictCount++;//记录冲突的次数
 			if (++rehashTimes > ALLOWED_REHASHS) {
 				// 再散列次数太多，把表扩大，在rehash
 				rehash((int)(table.length/MAX_LOAD));
