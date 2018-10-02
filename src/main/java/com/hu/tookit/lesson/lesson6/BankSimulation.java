@@ -23,13 +23,18 @@ public class BankSimulation {
 			while (true) {
 				if (myQueue.size() == 10) {
 					System.out.println("排队到极限，请稍后再来");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					continue;
 				}
 				System.out.println("进入银行开始排队，等候处理");
 				myQueue.insert(1);
 				System.out.println(myQueue);
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -45,7 +50,7 @@ public class BankSimulation {
 				if (myQueue.size() == 0) {
 					System.out.println("银行暂时没有业务处理");
 					try {
-						Thread.sleep(3000);
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -55,7 +60,7 @@ public class BankSimulation {
 				myQueue.removeMin();
 				System.out.println(myQueue);
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(5000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

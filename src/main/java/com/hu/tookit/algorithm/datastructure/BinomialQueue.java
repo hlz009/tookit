@@ -1,6 +1,8 @@
 package com.hu.tookit.algorithm.datastructure;
 
 import java.lang.reflect.Array;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * 二项队列
@@ -63,6 +65,39 @@ public class BinomialQueue<T extends Comparable<? super T>> {
 		size ++;
 	}
 
+	public BinomialQueue(T[] elements) {
+		this(elements.length);
+		buildHeap(elements);
+	}
+
+	private void buildHeap(T[] elements) {
+		Queue<BinomialQueue<T>> waitQueue = new ArrayBlockingQueue<>(elements.length);
+		for (T element: elements) {
+			waitQueue.add(new BinomialQueue<T>(element));
+		}
+		int i = 0;
+		while (!waitQueue.isEmpty()) {
+			int cusor = 0;
+			BinomialQueue<T> tmp = waitQueue.poll();
+			while (cusor < i) {
+				tmp.merge(waitQueue.poll());
+				cusor++;
+			}
+			trees[i] = tmp.trees[i];
+			i++;
+			if (waitQueue.size() < 1<<i) {
+				break;
+			}
+		}
+		size = (1<<i) - 1;// i是下标, 求得容量
+		BinomialQueue<T> tmp2 = waitQueue.poll();
+		while (!waitQueue.isEmpty()) {
+			tmp2.merge(waitQueue.poll());
+		}
+		// 合并剩余的一个二项树
+		merge(tmp2);
+	}
+
 	public void insert(T element) {
 		merge(new BinomialQueue<T>(element));
 	}
@@ -83,9 +118,9 @@ public class BinomialQueue<T extends Comparable<? super T>> {
 		T minVal = trees[minIndex].element;
 		// 保留的node，重新构造队列
 		BinomialNode<T> deletedNode = trees[minIndex].leftChild;
-		// 根据二项式性质 拆分后的二项树，建立minIndex+1大小的数组装载每个二项树
-		BinomialQueue<T> deletedQueue = new BinomialQueue<T>(minIndex + 1);
-		deletedQueue.size = 1 << minIndex - 1;
+		// 根据二项式性质 拆分后的二项树，建立minIndex大小的数组装载每个二项树
+		BinomialQueue<T> deletedQueue = new BinomialQueue<T>(minIndex);
+		deletedQueue.size = 1 << minIndex - 1;// 去除了根元素 -1
 		for (int i = minIndex - 1; i >= 0; i--) {
 			deletedQueue.trees[i] = deletedNode;
 			deletedNode = deletedNode.nextSbling;
@@ -102,6 +137,17 @@ public class BinomialQueue<T extends Comparable<? super T>> {
 		if (this == rhs) {
 			return;
 		}
+		// 保证小队列合并到大队列
+		if (this.size < rhs.size) {
+			BinomialQueue<T> tmp = this;
+			this.size = rhs.size;
+			this.trees = rhs.trees;
+			rhs = tmp;
+		}
+		excuteMerge(rhs);
+	}
+
+	private void excuteMerge(BinomialQueue<T> rhs) {
 		size += rhs.size;
 		if (size > capacity()) {
 			// 找出两个树的最大容量，合并之后最多只需要最大的容量+1（二项式的性质决定的）
@@ -113,6 +159,10 @@ public class BinomialQueue<T extends Comparable<? super T>> {
 		for (int i = 0, j = 1; j <= size; i++, j*=2) {
 			BinomialNode<T> b1 = trees[i];// 当前的树,合并的结果放入当前树中
 			BinomialNode<T> b2 = i < rhs.trees.length? rhs.trees[i]: null;
+			if (i > rhs.trees.length && carry == null) {
+				// 被合并的树已经结束，上一次也没有合并完的树，结束。
+				break;
+			}
 			// 8种情况合并
 			carry = merge(b1, b2, carry, i);
 		}
@@ -242,16 +292,19 @@ public class BinomialQueue<T extends Comparable<? super T>> {
 	}
 
 	public static void main(String[] args) {
-		BinomialQueue<Integer> bq = new BinomialQueue<>();
-		bq.insert(1);
-		bq.insert(2);
-		bq.insert(3);
-		bq.insert(4);
-		bq.insert(5);
-		System.out.println(bq);
-		for (int i = 0; i < 20; i++) {
-			bq.deleteMin();
-			System.out.println(bq);
-		}
+		Integer[] nums = {1,2,3,4,5,6};
+		BinomialQueue<Integer> bq = new BinomialQueue<>(nums);
+//		bq.insert(1);
+//		bq.insert(2);
+//		bq.insert(3);
+//		bq.insert(4);
+//		bq.insert(5);
+//		bq.insert(6);
+		System.out.println(bq.findMinIndex());
+		System.out.println(bq.size);
+//		for (int i = 0; i < 20; i++) {
+//			bq.deleteMin();
+//			System.out.println(bq);
+//		}
 	}
 }

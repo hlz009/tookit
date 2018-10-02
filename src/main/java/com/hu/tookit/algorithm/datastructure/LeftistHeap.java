@@ -1,5 +1,10 @@
 package com.hu.tookit.algorithm.datastructure;
 
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+
+import org.springframework.boot.info.BuildProperties;
+
 /**
  * 左式堆
  * @author xiaozhi009
@@ -8,9 +13,14 @@ package com.hu.tookit.algorithm.datastructure;
 public class LeftistHeap<T extends Comparable<? super T>> {
 
 	private LeftistNode<T> root;
-
+	private int size;
+	
 	public LeftistHeap() {
 		root = null;
+	}
+
+	public LeftistHeap(T[] elements) {
+		buildHeap(elements);
 	}
 
 	private class LeftistNode<T> {
@@ -41,7 +51,28 @@ public class LeftistHeap<T extends Comparable<? super T>> {
 	 */
 	public void merge(LeftistHeap<T> anotherLeftistHeap) {
 //		root = merge(root, anotherLeftistHeap.root);
+		size += anotherLeftistHeap.size;
 		root = merge2(root, anotherLeftistHeap.root);
+		anotherLeftistHeap = null;// 空引用，便于JVM回收
+	}
+
+	private void buildHeap(T[] elements) {
+		Queue<LeftistNode<T>> result = buildQueue(elements);
+		while(result.size() > 1) {
+			LeftistNode<T> first = result.poll();
+			LeftistNode<T> second = result.poll();
+			first = merge2(first, second);
+			result.add(first);
+		}
+		root = result.poll();
+	}
+	
+	private Queue<LeftistNode<T>> buildQueue(T[] elements) {
+		Queue<LeftistNode<T>> result = new ArrayBlockingQueue<>(elements.length);
+		for (T element: elements) {
+			result.add(new LeftistNode<T>(element));
+		}
+		return result;
 	}
 
 	private LeftistNode<T> merge(LeftistNode<T> h1, LeftistNode<T> h2) {
@@ -128,7 +159,8 @@ public class LeftistHeap<T extends Comparable<? super T>> {
 		// 构建堆-交换左右儿子，左儿子不动
 		LeftistNode<T> next = h;
 		while(next != null) {
-			if (next.left == null || next.right.npl > next.left.npl) {
+			if (next.left == null || next.right != null && 
+					next.right.npl > next.left.npl) {
 				swapChildren(next);
 				if (next.right != null) {
 					next.npl = next.right.npl+1;
@@ -136,7 +168,7 @@ public class LeftistHeap<T extends Comparable<? super T>> {
 			}
 			next = next.right;
 		}
-
+		return h;
 //		while(next != null && next.right != null) {
 //			if (next.left == null || next.right.npl > next.left.npl) {
 //				swapChildren(next);
@@ -149,7 +181,6 @@ public class LeftistHeap<T extends Comparable<? super T>> {
 //			}
 //			next = next.right;
 //		}
-		return h;
 	}
 
 	private LeftistNode<T> swapChildren(LeftistNode<T> h) {
@@ -200,13 +231,16 @@ public class LeftistHeap<T extends Comparable<? super T>> {
 	}
 
 	public static void main(String[] args) {
-		LeftistHeap<Integer> lh = new LeftistHeap<Integer>();
-		lh.insert(10);
-		lh.insert(1);
-		lh.insert(2);
-		lh.insert(13);
-		lh.insert(9);
-		lh.insert(6);
+//		LeftistHeap<Integer> lh = new LeftistHeap<Integer>();
+//		lh.insert(10);
+//		lh.insert(1);
+//		lh.insert(2);
+//		lh.insert(13);
+//		lh.insert(9);
+//		lh.insert(6);
+		
+		Integer[] nums = {1, 2, 3, 4, 5, 6, 7, 8};
+		LeftistHeap<Integer> lh = new LeftistHeap<Integer>(nums);
 		
 //		LeftistHeap<Integer> lh2 = new LeftistHeap<Integer>();
 //		lh2.insert(20);
@@ -214,8 +248,10 @@ public class LeftistHeap<T extends Comparable<? super T>> {
 //		lh2.insert(8);
 //		lh.merge(lh2);
 		System.out.println(lh);
-		lh.deleteMin();
 //		lh.deleteMin();
+////		lh.deleteMin();
 //		System.out.println(lh);
+		
+
 	}
 }

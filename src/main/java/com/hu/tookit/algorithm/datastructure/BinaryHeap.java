@@ -99,6 +99,23 @@ public class BinaryHeap<T extends Comparable<? super T>> {
 		return -1;
 	}
 
+	private int getIndex2(T data) {
+		int index = table.length/4;
+		int i = 0;
+		while ( i < table.length) {
+			int comparabeResult = data.compareTo(table[index]);
+			if (comparabeResult < 0) {
+				index = index/2;
+			} else if (comparabeResult> 0){
+				index++;
+			} else {
+				return index;
+			}
+			i++;
+		}
+		return -1;
+	}
+	
 	/**
 	 * 上滤
 	 * @param hole

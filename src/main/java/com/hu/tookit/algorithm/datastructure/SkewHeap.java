@@ -1,5 +1,8 @@
 package com.hu.tookit.algorithm.datastructure;
 
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+
 /**
  * 斜堆
  * 与左式堆类似，但是不保留零路径长
@@ -27,6 +30,14 @@ public class SkewHeap <T extends Comparable<? super T>>{
 		}
 	}
 
+	public SkewHeap() {
+		
+	}
+
+	public SkewHeap(T[] elements) {
+		buildHeap(elements);
+	}
+
 	public boolean isEmpty() {
 		return root == null;
 	}
@@ -38,6 +49,25 @@ public class SkewHeap <T extends Comparable<? super T>>{
 	public void merge(SkewHeap<T> anotherLeftistHeap) {
 		root = merge(root, anotherLeftistHeap.root);
 //		root = merge2(root, anotherLeftistHeap.root);
+	}
+
+	private void buildHeap(T[] elements) {
+		Queue<SkewNode<T>> result = buildQueue(elements);
+		while(result.size() > 1) {
+			SkewNode<T> first = result.poll();
+			SkewNode<T> second = result.poll();
+			first = merge2(first, second);
+			result.add(first);
+		}
+		root = result.poll();
+	}
+
+	private Queue<SkewNode<T>> buildQueue(T[] elements) {
+		Queue<SkewNode<T>> result = new ArrayBlockingQueue<>(elements.length);
+		for (T element: elements) {
+			result.add(new SkewNode<T>(element));
+		}
+		return result;
 	}
 
 	private SkewNode<T> merge(SkewNode<T> h1, SkewNode<T> h2) {
@@ -65,7 +95,7 @@ public class SkewHeap <T extends Comparable<? super T>>{
 			h1.left = h2;
 		} else {
 			h1.right = merge(h1.right, h2);
-			// 右路径最后一个节点不交换,该节点是没有有子节点（也可能没左节点）
+			// 右路径最后一个节点不交换,该节点是没有有右子节点（也可能没左节点）
 			if (h1.right != null) {
 				// 交换左右儿子
 				swapChildren(h1);
@@ -175,13 +205,14 @@ public class SkewHeap <T extends Comparable<? super T>>{
 	}
 
 	public static void main(String[] args) {
-		SkewHeap<Integer> sh = new SkewHeap<Integer>();
-		sh.insert(10);
-		sh.insert(1);
-		sh.insert(2);
-		sh.insert(13);
-		sh.insert(9);
-		sh.insert(6);
+		Integer[] nums = {10, 1, 2, 13, 9, 6};
+		SkewHeap<Integer> sh = new SkewHeap<Integer>(nums);
+//		sh.insert(10);
+//		sh.insert(1);
+//		sh.insert(2);
+//		sh.insert(13);
+//		sh.insert(9);
+//		sh.insert(6);
 		
 //		SkewHeap<Integer> sh2 = new SkewHeap<Integer>();
 //		sh2.insert(20);
