@@ -10,12 +10,12 @@ import java.util.ArrayList;
  */
 public class SortCase {
 	public static void main(String[] args) {
-//		Integer[] a = {10, 2, 4, 8, 3, 7, 1, 17, 12, 25, 10, 9, 6};
+		Integer[] a = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
 //		Integer[] a = {8, 1, 4, 9, 0, 3, 5, 2, 7, 6};
 //		quickSelect(a, 7);
-//		quickSort(a);
-		String[] a = {"cvf", "abc", "xxx", "ser", "edc", "awr", "acde", "bfv"};
-		radixSort2(a, 4);
+		quickSort4(a, 0, a.length-1);
+//		String[] a = {"cvf", "abc", "xxx", "ser", "edc", "awr", "acde", "bfv"};
+//		radixSort2(a, 4);
 		print(a);
 	}
 	
@@ -226,7 +226,7 @@ public class SortCase {
 	 */
 	private static <T extends Comparable<? super T>> 
 	void quickSort2(T[] a, int left, int right) {
-		if (left + CUTOFF <= right) {
+		if (left + CUTOFF > right) {
 			// 小数组，可以不采用快速排序
 			insertSort(a, left, right);
 			return;
@@ -244,8 +244,131 @@ public class SortCase {
 			}
 		}
 		swapReference(a, i, right-1);
-		quickSort(a, left, i-1);// sort small subArray
-		quickSort(a, i+1, right);// sort big subArray
+		quickSort2(a, left, i-1);// sort small subArray
+		quickSort2(a, i+1, right);// sort big subArray
+	}
+
+	/**
+	 * 与quickSort方法效果一样，去掉最后一次递归调用
+	 * @param a
+	 * @param left
+	 * @param right
+	 */
+	private static <T extends Comparable<? super T>> 
+	void quickSort3(T[] a, int left, int right) {
+//		int start = left;
+//		int end = right;
+		while (true) {
+			if (left + CUTOFF > right) {
+				// 小数组，可以不采用快速排序
+				insertSort(a, left, right);
+				return;
+			}
+			T pivot = getPivot(a, left, right);
+			int i = left, j = right-1;
+			while (true) {
+				// 不用包括等于的情况，因为是先执行在判断。
+				while (a[++i].compareTo(pivot) < 0) {}
+				while (a[--j].compareTo(pivot) > 0) {}
+				if (i < j) {
+					swapReference(a, i, j);
+				} else {
+					break;
+				}
+			}
+			swapReference(a, i, right-1);
+			quickSort3(a, left, i-1);// sort small subArray
+//			quickSort(a, i+1, right);// sort big subArray 
+			// 改写成不用递归调用的形式
+			left = i + 1;
+			continue;
+		}
+
+	}
+
+	private static <T extends Comparable<? super T>> 
+	void quickInnerSort(T[] a, int left, int right) {
+		if (left + CUTOFF > right) {
+			// 小数组，可以不采用快速排序
+			insertSort(a, left, right);
+			return;
+		}
+		T pivot = getPivot(a, left, right);
+		int i = left, j = right-1;
+		while (true) {
+			// 不用包括等于的情况，因为是先执行在判断。
+			while (a[++i].compareTo(pivot) < 0) {}
+			while (a[--j].compareTo(pivot) > 0) {}
+			if (i < j) {
+				swapReference(a, i, j);
+			} else {
+				break;
+			}
+		}
+		swapReference(a, i, right-1);
+	}
+
+	/**
+	 * 与quickSort方法效果一样
+	 * 三路快排
+	 * @param a
+	 * @param left
+	 * @param right
+	 */
+	private static <T extends Comparable<? super T>> 
+	void quickSort4(T[] a, int left, int right) {
+		if (left + CUTOFF > right) {
+			// 小数组，可以不采用快速排序
+			insertSort(a, left, right);
+			return;
+		}
+		T pivot = getPivot(a, left, right);
+		int i = left, j = right-1;
+		int leftEqualCount = 0;
+		int rightEqualCount = 0;
+		while (true) {
+			// 等于的情况,单独作为一路
+			while (a[i].compareTo(pivot) <= 0) {
+				if (a[i].compareTo(pivot) == 0) {
+					leftEqualCount++;
+				} else {
+					if (leftEqualCount > 0) {
+						int tmpIndex = i;
+						while (leftEqualCount > 0) {
+							a[tmpIndex - 1] = a[tmpIndex];
+							a[tmpIndex] = pivot;
+							leftEqualCount--;
+							tmpIndex--;
+						}
+					}
+				}
+				i++;
+			}
+			// 得到的pivot放入了右半部分，在这里往中间放置
+			while (a[j].compareTo(pivot) >= 0) {
+				if (a[j].compareTo(pivot) == 0) {
+					rightEqualCount++;
+				} else {
+					int tmpIndex = j;
+					while (rightEqualCount > 0) {
+						a[tmpIndex + 1] = a[tmpIndex];
+						a[tmpIndex] = pivot;
+						rightEqualCount--;
+						tmpIndex++;
+					}
+				}
+				j--;
+			}
+			// 交换操作已经在上面做了。
+			if (i < j) {
+//				swapReference(a, i, j);
+			} else {
+				break;
+			}
+		}
+//		swapReference(a, i, right-1);
+		quickSort2(a, left, i-1);// sort small subArray
+		quickSort2(a, i+1, right);// sort big subArray
 	}
 
 	/**
