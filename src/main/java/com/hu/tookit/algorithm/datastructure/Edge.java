@@ -6,12 +6,12 @@ package com.hu.tookit.algorithm.datastructure;
  *
  */
 public class Edge<T> implements Comparable<T> {
-	Vertex<T> u;
-	Vertex<T> v;
+	AbstractVertex<T> u;
+	AbstractVertex<T> v;
 	
 	int dist;
 
-	public Edge(Vertex<T> u, Vertex<T> v, int dist) {
+	public Edge(AbstractVertex<T> u, AbstractVertex<T> v, int dist) {
 		this.u = u;
 		this.v = v;
 		this.dist = dist;

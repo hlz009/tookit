@@ -1,40 +1,40 @@
 package com.hu.tookit.algorithm.datastructure;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * 顶点
+ * 顶点抽象类
  * @author xiaozhi009
  *
  */
-public class Vertex<V> {
+public abstract class AbstractVertex<V> {
 	final static int INFINITY = (int) (1.0/0);
 
 	V topNum;//存放拓扑编号
 	int indegeree;
 	// array 和 cvw 可以合并
-	V[] array;// 存放邻接表的其他数据关系
-	int[] cvw;// 权值关系，与array关系对应。
-	
+	List<V> adjacList;// 存放邻接表的其他数据关系	
 	int dist;// 距离， 初始默认为无穷大。
-	boolean known = false;
-	Vertex<V> path;
 
-	Vertex(V topNum) {
-		this(topNum, null, INFINITY, null);
+	AbstractVertex(V topNum) {
+		this(topNum, null, INFINITY);
 	}
 
-	Vertex(V topNum, V[] array, int dist) {
-		this(topNum, array, dist, null);
+	AbstractVertex(V topNum, V[] array) {
+		this(topNum, array, INFINITY);
 	}
 
-	Vertex(V topNum, V[] array, int[] cvw) {
-		this(topNum, array, INFINITY, cvw);
-	}
-
-	Vertex(V topNum, V[] array, int dist, int[] cvw) {
+	AbstractVertex(V topNum, V[] array, int dist) {
 		this.topNum = topNum;
-		this.array = array;
+		if (array != null) {
+			List<V> tmpList = Arrays.asList(array);
+			this.adjacList = new ArrayList<>(tmpList);
+		} else {
+			this.adjacList = new ArrayList<>(); 
+		}
 		this.dist = dist;
-		this.cvw = cvw;
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class Vertex<V> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Vertex other = (Vertex) obj;
+		AbstractVertex other = (AbstractVertex) obj;
 		if (topNum == null) {
 			if (other.topNum != null)
 				return false;
