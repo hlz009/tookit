@@ -85,7 +85,7 @@ public class SortCase {
 	//-------------------------------------------------------------//
 	// 堆排序 -- 
 	public static <T extends Comparable<? super T>> 
-	void heapSort(T[] a) {
+	T[] heapSort(T[] a) {
 		/** buildHeap */
 		for (int i = a.length/2 - 1; i >= 0; i--) {
 			percolateDown(a, i, a.length);
@@ -98,6 +98,7 @@ public class SortCase {
 			a[i] = tmp;
 			percolateDown(a, 0, i); /** i 堆的大小一直在减少 */
 		}
+		return a;
 	}
 
 	/**
