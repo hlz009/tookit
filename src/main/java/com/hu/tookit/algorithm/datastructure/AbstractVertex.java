@@ -6,6 +6,12 @@ import java.util.List;
 
 /**
  * 顶点抽象类
+ * 该类数据成员会优化成，更便于处理复杂操作
+ * 	private T topNum; 
+ * 	private List<Vertex> adjacent;
+ * 	private int indegeree;
+ *  private int dist;
+ * 
  * @author xiaozhi009
  *
  */
