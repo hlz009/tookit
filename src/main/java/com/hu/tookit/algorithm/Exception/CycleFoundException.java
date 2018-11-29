@@ -7,4 +7,8 @@ public class CycleFoundException extends RuntimeException {
     public CycleFoundException() {
         super("该图有圈");
     }
+
+    public CycleFoundException(String msg) {
+        super(msg);
+    }
 }
