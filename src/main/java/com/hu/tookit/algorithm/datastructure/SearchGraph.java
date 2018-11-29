@@ -28,6 +28,7 @@ public class SearchGraph implements Graph {
 			super(topNum, array, dist);
 			if (null != array) {
 				// 只进行值的传递，不进行引用传递
+				// 用LinkedList获取好些
 				this.tmpAdjacList = new ArrayList<>(this.adjacList);
 			} else {
 				this.tmpAdjacList = new ArrayList<>();
