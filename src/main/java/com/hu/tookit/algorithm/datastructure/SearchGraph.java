@@ -82,7 +82,7 @@ public class SearchGraph implements Graph {
 		if (isNotNull(v.adjacList))
 			for (Object k: v.adjacList) {
 				Vertex w = table.get(k);
-				if (!w.visited) {
+				if (!w.visited) {// or 条件改为w.num > v.num
 					w.parent = v;
 					executeFindArtiPoint(w);
 					if (w.low >= v.num) {
@@ -91,7 +91,7 @@ public class SearchGraph implements Graph {
 					}
 					v.low = min(v.low, w.low);
 				} else {
-					if (v.parent != w) {
+					if (v.parent != w) {// 背向边
 						v.low = min(v.low, w.num);
 					}
 				}
