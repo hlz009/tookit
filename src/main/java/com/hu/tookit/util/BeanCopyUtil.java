@@ -88,9 +88,22 @@ public class BeanCopyUtil extends BeanUtils{
 	 */
 	@SuppressWarnings("unchecked")
 	public static void batchCopyProperties(List sourceList, List targetList) {
-		if (null == sourceList || sourceList.isEmpty()) {
-		    Assert.notNull(sourceList, "sourceList must not be null");
+		AssertUtil.notNull(sourceList, "sourceList must not be null");
+		AssertUtil.notEmpty(sourceList, "sourceList have no elements");
+		for (Object source : sourceList) {
+			Object obj = new Object();
+			copyProperties(source, obj);
+			targetList.add(obj);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void batchCopyProperties(List sourceList, List targetList, 
+			Class<? extends Object> sourceClass, Class<? extends Object> targetClass) {
+		AssertUtil.notNull(sourceList, "sourceList must not be null");
+		AssertUtil.notEmpty(sourceList, "sourceList have no elements");
+		AssertUtil.isEqual(sourceList.get(0).getClass(), sourceClass, "source 类型不匹配");
+		AssertUtil.isEqual(targetList.get(0).getClass(), targetClass, "target 类型不匹配");
 		for (Object source : sourceList) {
 			Object obj = new Object();
 			copyProperties(source, obj);
