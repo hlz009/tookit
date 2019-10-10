@@ -86,7 +86,7 @@ public class BeanCopyUtil extends BeanUtils{
 	 * @param sourceList
 	 * @param targetList
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void batchCopyProperties(List sourceList, List targetList) {
 		AssertUtil.notNull(sourceList, "sourceList must not be null");
 		AssertUtil.notEmpty(sourceList, "sourceList have no elements");
@@ -97,7 +97,7 @@ public class BeanCopyUtil extends BeanUtils{
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void batchCopyProperties(List sourceList, List targetList, 
 			Class<? extends Object> sourceClass, Class<? extends Object> targetClass) {
 		AssertUtil.notNull(sourceList, "sourceList must not be null");
