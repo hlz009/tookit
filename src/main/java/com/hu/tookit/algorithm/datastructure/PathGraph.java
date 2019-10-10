@@ -16,7 +16,7 @@ public class PathGraph implements Graph {
 	private HashMap<Object, Vertex> table;
 	private volatile boolean init = false;
 
-	private class Vertex<V> extends AbstractVertex<V> {
+	class Vertex<V> extends AbstractVertex<V> {
 		boolean known = false;
 		int[] cvw;// 权值关系，与array关系对应。
 		Vertex<V> path;// 上一个路径（理解为父）
@@ -39,6 +39,14 @@ public class PathGraph implements Graph {
 		table = new HashMap<>();
 	}
 
+	public int graphSize() {
+		return table.size();
+	}
+
+	public HashMap<Object, Vertex> getTable() {
+		return table;
+	}
+	
 	@Override
 	public void put(Object k, Object[] v) {
 		put(k, v, 1);
